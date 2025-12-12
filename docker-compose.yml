@@ -1,0 +1,31 @@
+services:
+  api-gateway:
+    build: ./ApiGateway
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+    depends_on:
+      - filestoring
+      - fileanalysis
+    
+  filestoring:
+    build: "./FileStoringService "
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5001
+    volumes:
+      - ./uploads:/app/uploads
+      - ./data/filestoring:/app/data
+
+  fileanalysis:
+    build: "./FileAnalisisService"
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5002
+    volumes:
+      - ./data/analysis:/app/data
+    depends_on:
+      - filestoring
